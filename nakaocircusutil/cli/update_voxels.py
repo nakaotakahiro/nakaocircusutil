@@ -77,16 +77,8 @@ def update_voxels(
 
     # ラベルのメタデータを更新
     label_meta["data"].update(label_local.get_meta_dict())
-
-    circus_api.case_addrev_dict(
-        case_id,
-        revision,
-        [
-            "--force",
-            "-d",
-            description or f"update {label_meta['name']} (series[{series_no}].label[{label_no}])",
-        ],
-    )
+    revision["description"] = description or f"update {label_meta['name']} (series[{series_no}].label[{label_no}])"
+    circus_api.case_addrev_dict(case_id, revision, ["--force", "-D"])
 
 
 if __name__ == "__main__":
