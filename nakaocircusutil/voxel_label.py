@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 import scipy.ndimage
@@ -60,3 +61,10 @@ class CircusVoxelLabel(object):
 
     def sha1(self) -> str:
         return hashlib.sha1(self.packed).hexdigest()
+
+    def get_meta_dict(self) -> dict[str, Any]:
+        return {
+            "voxels": self.sha1(),
+            "origin": self.origin_zyx[::-1],
+            "size": self.shape_zyx[::-1],
+        }

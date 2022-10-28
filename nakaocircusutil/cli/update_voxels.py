@@ -76,9 +76,7 @@ def update_voxels(
     circus_api.blob_post(label_local.packed)
 
     # ラベルのメタデータを更新
-    label_meta["data"]["voxels"] = label_local.sha1()
-    label_meta["data"]["origin"] = label_local.origin_zyx[::-1]
-    label_meta["data"]["size"] = label_local.shape_zyx[::-1]
+    label_meta["data"].update(label_local.get_meta_dict())
 
     circus_api.case_addrev_dict(
         case_id,
