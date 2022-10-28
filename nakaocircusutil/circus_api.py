@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 import subprocess
 from logging import getLogger
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Optional, Sequence, Union
 
 
@@ -68,3 +70,12 @@ def blob_post(blob: bytes):
 
 def case_addrev(case_id: str, args: Sequence[str]):
     call(["case-addrev", *args, case_id])
+
+
+def case_addrev_dict(case_id: str, revision: dict, args: Sequence[str]):
+    """引数revisionの内容でrevisionを作成"""
+    with TemporaryDirectory() as temp_dir:
+        revision_json = Path(temp_dir) / "revision.json"
+        json.dump(revision, open(revision_json, "w"))
+        cat = f"python -c \"print(open('{revision_json}').read())\""
+        case_addrev(case_id, ["-e", cat, *args])

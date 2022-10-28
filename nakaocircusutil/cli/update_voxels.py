@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import json
 import re
 from pathlib import Path
 from pprint import pprint
-from tempfile import TemporaryDirectory
 
 import fire
 from nakaocircusutil import circus_api
@@ -59,7 +57,8 @@ def update_voxels(
     # 諸々読み込み
     label_local = CircusVoxelLabel.from_array(imread(label_path))
     case = circus_api.get_case(case_id)
-    label_meta = case["revisions"][-1]["series"][series_no]["labels"][label_no]
+    revision = case["revisions"][-1]
+    label_meta = revision["series"][series_no]["labels"][label_no]
 
     # 確認のため、更新されるラベルのメタデータを出力
     print(f"The following label ('{label_meta['name']}') will be updated:")
@@ -80,19 +79,16 @@ def update_voxels(
     label_meta["data"]["voxels"] = label_local.sha1()
     label_meta["data"]["origin"] = label_local.origin_zyx[::-1]
     label_meta["data"]["size"] = label_local.shape_zyx[::-1]
-    with TemporaryDirectory() as temp_dir:
-        label_meta_json = Path(temp_dir) / "label_meta.json"
-        json.dump(label_meta, open(label_meta_json, "w"))
-        circus_api.case_addrev(
-            case_id,
-            [
-                "--force",
-                "-d",
-                description or f"update {label_meta['name']} (series[{series_no}].label[{label_no}])",
-                "-e",
-                f"python -m nakaocircusutil.cli.make_voxel_revision {label_meta_json} {series_no} {label_no}",
-            ],
-        )
+
+    circus_api.case_addrev_dict(
+        case_id,
+        revision,
+        [
+            "--force",
+            "-d",
+            description or f"update {label_meta['name']} (series[{series_no}].label[{label_no}])",
+        ],
+    )
 
 
 if __name__ == "__main__":
