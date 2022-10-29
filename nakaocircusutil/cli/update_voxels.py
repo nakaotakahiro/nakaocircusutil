@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from pprint import pprint
+from typing import Optional
 
 import fire
 from nakaocircusutil import circus_api
@@ -54,6 +55,17 @@ def update_voxels(
     assert series_no is not None, "failed to infer SERIES_NO"
     assert label_no is not None, "failed to infer LABEL_NO"
 
+    _update_voxels_isolated(label_path, case_id, series_no, label_no, description, force)
+
+
+def _update_voxels_isolated(
+    label_path: Path,
+    case_id: str,
+    series_no: int,
+    label_no: int,
+    description: Optional[str],
+    force: bool,
+):
     # 諸々読み込み
     label_local = CircusVoxelLabel.from_array(imread(label_path))
     case = circus_api.get_case(case_id)
