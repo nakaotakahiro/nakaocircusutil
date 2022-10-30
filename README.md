@@ -2,7 +2,7 @@ Nakao CIRCUS Utilities
 ===
 
 # Installation
-`pip install git+ssh://git@github.com/nakaotakahiro/nakaocircusutil.git`
+`pip install git+https://github.com/nakaotakahiro/nakaocircusutil`
 
 # Executables
 本パッケージをインストールすることで、下記のコマンドが実行可能になります。
