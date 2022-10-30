@@ -28,7 +28,7 @@ $ # どの症例のどのシリーズのどのラベルを上書きするか指�
 $ # --mode は "isolated" または "combined"
 $ # --series-no, --label-no は「上から何番目か (0オリジン)」
 $ update-voxels /path/to/label.mhd \
-    --mode isolated
+    --mode isolated \
     --case-id CASE_ID \
     --series-no 0 \
     --label-no 2
