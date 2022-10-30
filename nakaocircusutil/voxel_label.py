@@ -49,6 +49,10 @@ class CircusVoxelLabel(object):
             origin_zyx=[s.start for s in crop_slices],  # type: ignore
         )
 
+    @classmethod
+    def from_combined(cls, combined: np.ndarray) -> list[CircusVoxelLabel]:
+        return [cls.from_array(combined == i + 1) for i in range(combined.max())]
+
     def to_array(self, original_shape_zyx: tuple[int, int, int]) -> np.ndarray:
         array_cropped = unpack(self.packed, self.shape_zyx)
 
