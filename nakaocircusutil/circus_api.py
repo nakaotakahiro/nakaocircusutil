@@ -22,6 +22,11 @@ def call(
         logger.error(e.stderr.decode("utf-8"))
         raise e
 
+    stderr = cp.stderr.decode("utf-8")
+    if stderr != "":
+        logger.error(stderr)
+        raise AssertionError(stderr)
+
     stdout = cp.stdout.decode("utf-8")
     try:
         return json.loads(stdout)
