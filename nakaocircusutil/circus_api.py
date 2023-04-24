@@ -39,6 +39,7 @@ def get(
     filter: Optional[dict] = None,
     sort: Optional[dict] = None,
     limit: Optional[int] = None,
+    page: Optional[int] = None,
 ) -> Any:
     args = ["get", resource]
     if filter:
@@ -47,6 +48,8 @@ def get(
         args.extend(["-q", f"sort={json.dumps(sort)}"])
     if limit:
         args.extend(["-q", f"limit={limit}"])
+    if page:
+        args.extend(["-q", f"page={page}"])
     return call(args)
 
 
