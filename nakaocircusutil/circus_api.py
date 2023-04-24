@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import math
 import subprocess
 from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, Optional, Sequence, Union
+
+from tqdm import tqdm
 
 
 def call(
@@ -51,6 +54,28 @@ def get(
     if page:
         args.extend(["-q", f"page={page}"])
     return call(args)
+
+
+def get_all(
+    resource: str,
+    filter: Optional[dict] = None,
+    sort: Optional[dict] = None,
+    items_per_page: int = 200,
+    show_progress: bool = True,
+) -> Any:
+    n_items = get(resource, filter=filter, sort=sort, limit=1, page=1)["totalItems"]
+    n_pages = math.ceil(n_items / items_per_page)
+
+    index_iterator = range(1, n_pages + 1)
+    if show_progress:
+        index_iterator = tqdm(index_iterator, total=n_pages)
+
+    items = []
+    for page in index_iterator:
+        items.extend(get(resource, filter=filter, sort=sort, limit=items_per_page, page=page)["items"])
+
+    assert len(items) == n_items
+    return items
 
 
 def get_one(
